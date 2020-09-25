@@ -1,0 +1,74 @@
+buildscript {
+    ext {
+        kotlinVersion = "1.3.72"
+        joobyVersion = "2.9.0"
+    }
+}
+
+plugins {
+    id "application"
+    id "org.jetbrains.kotlin.jvm" version "1.3.72"
+    id "org.jetbrains.kotlin.kapt" version "1.3.72"
+    id "io.jooby.run" version "${joobyVersion}"
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id "com.google.osdetector" version "1.6.2"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+group "com.example"
+version "1.0.0"
+mainClassName = "com.example.AppKt"
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "io.jooby:jooby-bom:$joobyVersion"
+    }
+}
+
+dependencies {
+    compile 'io.ebean:ebean:12.3.7'
+    compile 'io.ebean:ebean-querybean:12.3.7'
+
+    // query bean generation
+    kapt 'io.ebean:querybean-generator:12.3.7'
+
+    kapt "io.jooby:jooby-apt"
+    implementation "io.jooby:jooby-netty"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "ch.qos.logback:logback-classic"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+"
+    implementation 'io.jooby:jooby-jackson'
+    implementation 'io.jooby:jooby-hikari'
+    implementation 'io.jooby:jooby-ebean'
+    implementation 'io.jooby:jooby-jdbi'
+    implementation 'io.jooby:jooby-flyway'
+    implementation "com.h2database:h2"
+
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "io.jooby:jooby-test"
+    testImplementation "com.squareup.okhttp3:okhttp"
+    testImplementation 'io.ebean:ebean-test:12.3.7'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+/** Kotlin debug information: */
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions.javaParameters = true
+}
+
+shadowJar {
+    mergeServiceFiles()
+}
+
